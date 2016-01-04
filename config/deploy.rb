@@ -1,6 +1,12 @@
-set :application, 'my_app_name'
-set :repo_url, 'git@example.com:me/my_repo.git'
+set :application, 'revival615.com'
+set :repo_url, 'git@github.com:ranchodeluxemedia/revival615.com.git'
 
+
+set :wpcli_remote_url, 'http://revival615.com'
+set :wpcli_local_url, "http://localhost"
+set :local_temp_dir, 'config/tmp'
+set :wpcli_backup_db, true
+set :wpcli_local_db_backup_dir, 'config/backup'
 # Branch options
 # Prompts for the branch name (defaults to current branch)
 #ask :branch, -> { `git rev-parse --abbrev-ref HEAD`.chomp }
@@ -9,7 +15,7 @@ set :repo_url, 'git@example.com:me/my_repo.git'
 # This could be overridden in a stage config file
 set :branch, :master
 
-set :deploy_to, -> { "/srv/www/#{fetch(:application)}" }
+set :deploy_to, -> { "/var/www/public_html" }
 
 # Use :debug for more verbose output when troubleshooting
 set :log_level, :info
@@ -53,6 +59,17 @@ namespace :deploy do
       end
     end
   end
+end
+
+namespace :composer do
+    before 'install', 'change_dir'
+
+    desc 'Composer update'
+    task :change_dir do
+        on roles(:app) do
+            execute "cd #{release_path}/ && composer update"
+        end
+    end
 end
 
 # The above update_option_paths task is not run by default
